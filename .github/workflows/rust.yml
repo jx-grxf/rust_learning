@@ -1,0 +1,47 @@
+name: Rust CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check all Rust projects
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Rust tools
+        run: rustup component add rustfmt clippy
+
+      - name: Check every Cargo project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          found=false
+
+          while IFS= read -r manifest; do
+            found=true
+            project="$(dirname "$manifest")"
+
+            echo "::group::Checking ${project#./}"
+            cargo fmt --manifest-path "$manifest" --all -- --check
+            cargo clippy --manifest-path "$manifest" --all-targets --all-features -- -D warnings
+            cargo test --manifest-path "$manifest" --all-features
+            echo "::endgroup::"
+          done < <(
+            find . -name Cargo.toml -not -path '*/target/*' | sort
+          )
+
+          if [ "$found" = false ]; then
+            echo "No Cargo projects found."
+            exit 1
+          fi
