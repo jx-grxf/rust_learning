@@ -20,3 +20,7 @@ The current example can be compiled directly with `rustc`:
 rustc hello_world/main.rs -o hello_world/hello_world
 ./hello_world/hello_world
 ```
+
+## License 
+
+MIT - Johannes Grof 2026
