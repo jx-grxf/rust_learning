@@ -1,0 +1,14 @@
+# Rust/Cargo build output
+/target/
+
+# Binaries created directly with `rustc main.rs`
+/main
+/main.exe
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
